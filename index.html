@@ -401,9 +401,9 @@ function orderWhatsApp(name,price){
 
 let phone="6283805174938"
 
-let message=Halo Amazing Reptile, saya ingin membeli ${name} harga Rp ${price}
+let message=`Halo Amazing Reptile, saya ingin membeli ${name} harga Rp ${price}`
 
-let url=https://wa.me/${phone}?text=${encodeURIComponent(message)}
+let url=`https://wa.me/${phone}?text=${encodeURIComponent(message)}`
 
 window.open(url,'_blank')
 
