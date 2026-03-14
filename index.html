@@ -11,39 +11,73 @@
 body{
 font-family:Arial;
 margin:0;
-background:#f5f5f5;
+background:#0f0f0f;
+color:white;
 }
 
-header{
-background:black;
-color:white;
-padding:20px;
+/* NAVBAR */
+
+nav{
 display:flex;
 justify-content:space-between;
+align-items:center;
+padding:20px;
+background:black;
 }
 
-.container{
-max-width:1100px;
-margin:auto;
-padding:20px;
+nav a{
+color:white;
+text-decoration:none;
+margin-left:20px;
 }
+
+/* HERO */
+
+.hero{
+text-align:center;
+padding:80px 20px;
+background:url("https://upload.wikimedia.org/wikipedia/commons/6/6a/Leopard_gecko.jpg");
+background-size:cover;
+background-position:center;
+}
+
+.hero h1{
+font-size:40px;
+}
+
+/* CONTAINER */
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:30px;
+}
+
+/* GRID */
 
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:20px;
+gap:25px;
 }
 
+/* CARD */
+
 .card{
-background:white;
-border-radius:10px;
+background:#1a1a1a;
+border-radius:12px;
 overflow:hidden;
-box-shadow:0 5px 10px rgba(0,0,0,0.1);
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-8px);
+box-shadow:0 10px 25px rgba(0,0,0,0.5);
 }
 
 .card img{
 width:100%;
-height:200px;
+height:220px;
 object-fit:cover;
 }
 
@@ -51,31 +85,60 @@ object-fit:cover;
 padding:15px;
 }
 
-button{
-padding:8px 12px;
-border:none;
-background:black;
-color:white;
-border-radius:5px;
-cursor:pointer;
-margin-top:5px;
+.price{
+color:#00ff9d;
+font-weight:bold;
 }
 
-.adminPanel{
+/* BUTTON */
+
+button{
+padding:10px 15px;
+border:none;
+background:#00ff9d;
+color:black;
+border-radius:6px;
+cursor:pointer;
+margin-top:10px;
+}
+
+button:hover{
+background:#00cc7a;
+}
+
+/* BADGE */
+
+.badge{
+display:inline-block;
+padding:5px 8px;
+background:#00ff9d;
+color:black;
+border-radius:5px;
+font-size:12px;
+margin-bottom:5px;
+}
+
+.sold{
+background:red;
+color:white;
+}
+
+/* ADMIN */
+
+.admin{
 margin-bottom:20px;
 }
 
 .editBox{
 display:none;
-background:#eee;
+background:#222;
 padding:10px;
 margin-top:10px;
-border-radius:5px;
 }
 
 input{
-padding:6px;
 width:100%;
+padding:6px;
 margin-top:5px;
 }
 
@@ -85,14 +148,31 @@ margin-top:5px;
 
 <body>
 
-<header>
+<nav>
+
 <h2>Amazing Reptile</h2>
-<div>Premium Leopard Gecko Breeder</div>
-</header>
+
+<div>
+
+<a href="#">Home</a>
+<a href="#">Shop</a>
+<a href="#">Gallery</a>
+<a href="#">Contact</a>
+
+</div>
+
+</nav>
+
+<div class="hero">
+
+<h1>Premium Leopard Gecko Breeder</h1>
+<p>Healthy • High Quality Morphs</p>
+
+</div>
 
 <div class="container">
 
-<div class="adminPanel">
+<div class="admin">
 
 <button onclick="adminLogin()">Admin Login</button>
 <button onclick="addProduct()" id="addBtn" style="display:none;">Tambah Gecko</button>
@@ -115,9 +195,10 @@ if(products.length===0){
 products=[
 
 {
-name:"Super Hypo",
+name:"Super Hypo Tangerine",
 price:1500000,
-img:"https://upload.wikimedia.org/wikipedia/commons/6/6a/Leopard_gecko.jpg"
+img:"https://upload.wikimedia.org/wikipedia/commons/6/6a/Leopard_gecko.jpg",
+status:"available"
 }
 
 ]
@@ -127,21 +208,17 @@ saveData()
 }
 
 function saveData(){
-
 localStorage.setItem("geckoProducts",JSON.stringify(products))
-
 }
 
 function adminLogin(){
 
-let input=prompt("Masukkan password admin")
+let input=prompt("Password Admin")
 
 if(input===password){
 
 admin=true
-
 alert("Admin Mode Aktif")
-
 document.getElementById("addBtn").style.display="inline-block"
 
 render()
@@ -157,15 +234,13 @@ alert("Password salah")
 function addProduct(){
 
 products.push({
-
 name:"Gecko Baru",
 price:0,
-img:""
-
+img:"",
+status:"available"
 })
 
 saveData()
-
 render()
 
 }
@@ -177,6 +252,10 @@ const container=document.getElementById("products")
 container.innerHTML=""
 
 products.forEach((p,i)=>{
+
+let badge=p.status==="sold"
+?'<div class="badge sold">SOLD</div>'
+:'<div class="badge">AVAILABLE</div>'
 
 let adminButtons=""
 let editBox=""
@@ -194,9 +273,12 @@ editBox=`
 
 <div class="editBox" id="edit${i}">
 
-<input id="name${i}" value="${p.name}" placeholder="Nama Gecko">
-
-<input id="price${i}" value="${p.price}" placeholder="Harga">
+<input id="name${i}" value="${p.name}">
+<input id="price${i}" value="${p.price}">
+<select id="status${i}">
+<option value="available">Available</option>
+<option value="sold">Sold</option>
+</select>
 
 <input type="file" onchange="uploadImage(event,${i})">
 
@@ -218,13 +300,15 @@ card.innerHTML=`
 
 <div class="card-body">
 
+${badge}
+
 <h3>${p.name}</h3>
 
-<p>Rp ${Number(p.price).toLocaleString()}</p>
+<p class="price">Rp ${Number(p.price).toLocaleString()}</p>
 
 <button onclick="orderWhatsApp('${p.name}',${p.price})">
 
-Order via WhatsApp
+Order WhatsApp
 
 </button>
 
@@ -246,22 +330,20 @@ function toggleEdit(i){
 
 let box=document.getElementById("edit"+i)
 
-if(box.style.display==="block"){
-box.style.display="none"
-}else{
-box.style.display="block"
-}
+box.style.display=
+box.style.display==="block"
+?"none"
+:"block"
 
 }
 
 function saveEdit(i){
 
 products[i].name=document.getElementById("name"+i).value
-
 products[i].price=document.getElementById("price"+i).value
+products[i].status=document.getElementById("status"+i).value
 
 saveData()
-
 render()
 
 }
@@ -271,9 +353,7 @@ function deleteProduct(i){
 if(confirm("Hapus gecko ini?")){
 
 products.splice(i,1)
-
 saveData()
-
 render()
 
 }
@@ -291,7 +371,6 @@ reader.onload=function(e){
 products[i].img=e.target.result
 
 saveData()
-
 render()
 
 }
@@ -304,7 +383,7 @@ function orderWhatsApp(name,price){
 
 let phone="6283805174938"
 
-let message=`Halo Amazing Reptile, saya ingin membeli ${name} dengan harga Rp ${price}`
+let message=`Halo Amazing Reptile, saya ingin membeli ${name} harga Rp ${price}`
 
 let url=`https://wa.me/${phone}?text=${encodeURIComponent(message)}`
 
