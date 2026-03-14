@@ -10,7 +10,7 @@
 
 <style>
 
-/* ================= BODY ================= */
+/* ===== BODY ===== */
 
 body{
 font-family:Arial, sans-serif;
@@ -19,7 +19,7 @@ background:#0f0f0f;
 color:white;
 }
 
-/* ================= NAVBAR ================= */
+/* ===== NAVBAR ===== */
 
 nav{
 display:flex;
@@ -35,7 +35,7 @@ text-decoration:none;
 margin-left:20px;
 }
 
-/* ================= HERO ================= */
+/* ===== HERO ===== */
 
 .hero{
 text-align:center;
@@ -50,7 +50,7 @@ font-size:40px;
 margin-bottom:10px;
 }
 
-/* ================= CONTAINER ================= */
+/* ===== CONTAINER ===== */
 
 .container{
 max-width:1200px;
@@ -58,7 +58,7 @@ margin:auto;
 padding:30px;
 }
 
-/* ================= SEARCH ================= */
+/* ===== SEARCH ===== */
 
 .search{
 margin-bottom:20px;
@@ -69,9 +69,10 @@ width:100%;
 padding:10px;
 border-radius:6px;
 border:none;
+outline:none;
 }
 
-/* ================= GRID ================= */
+/* ===== GRID ===== */
 
 .grid{
 display:grid;
@@ -79,7 +80,7 @@ grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
 gap:25px;
 }
 
-/* ================= CARD ================= */
+/* ===== CARD ===== */
 
 .card{
 background:#1a1a1a;
@@ -100,6 +101,8 @@ object-fit:cover;
 cursor:pointer;
 }
 
+/* ===== CARD BODY ===== */
+
 .card-body{
 padding:15px;
 }
@@ -115,7 +118,7 @@ color:#ccc;
 margin-top:5px;
 }
 
-/* ================= BUTTON ================= */
+/* ===== BUTTON ===== */
 
 button{
 padding:10px 15px;
@@ -125,13 +128,14 @@ color:black;
 border-radius:6px;
 cursor:pointer;
 margin-top:10px;
+font-weight:bold;
 }
 
 button:hover{
 background:#00cc7a;
 }
 
-/* ================= BADGE ================= */
+/* ===== BADGE ===== */
 
 .badge{
 display:inline-block;
@@ -148,7 +152,7 @@ background:red;
 color:white;
 }
 
-/* ================= ADMIN ================= */
+/* ===== ADMIN ===== */
 
 .admin{
 margin-bottom:20px;
@@ -166,13 +170,15 @@ input, textarea, select{
 width:100%;
 padding:6px;
 margin-top:5px;
+border-radius:4px;
+border:none;
 }
 
 textarea{
 height:60px;
 }
 
-/* ================= IMAGE ZOOM ================= */
+/* ===== IMAGE ZOOM ===== */
 
 #lightbox{
 position:fixed;
@@ -198,7 +204,7 @@ max-height:90%;
 
 <body>
 
-<!-- ================= NAVBAR ================= -->
+<!-- ===== NAVBAR ===== -->
 
 <nav>
 
@@ -213,7 +219,7 @@ max-height:90%;
 
 </nav>
 
-<!-- ================= HERO ================= -->
+<!-- ===== HERO ===== -->
 
 <div class="hero">
 
@@ -222,15 +228,13 @@ max-height:90%;
 
 </div>
 
-<!-- ================= CONTENT ================= -->
+<!-- ===== CONTENT ===== -->
 
 <div class="container">
 
 <div class="admin">
-
 <button onclick="adminLogin()">Admin Login</button>
 <button onclick="addProduct()" id="addBtn" style="display:none;">Tambah Gecko</button>
-
 </div>
 
 <div class="search">
@@ -241,7 +245,7 @@ max-height:90%;
 
 </div>
 
-<!-- ================= IMAGE ZOOM ================= -->
+<!-- ===== LIGHTBOX ===== -->
 
 <div id="lightbox" onclick="closeZoom()">
 <img id="zoomImg">
@@ -249,14 +253,14 @@ max-height:90%;
 
 <script>
 
-/* ================= GLOBAL ================= */
+/* ===== GLOBAL ===== */
 
 let admin=false
 const password="123456"
 
 let products = JSON.parse(localStorage.getItem("geckoProducts")) || []
 
-/* ================= DEFAULT PRODUCT ================= */
+/* ===== DEFAULT DATA ===== */
 
 if(products.length===0){
 
@@ -272,19 +276,19 @@ saveData()
 
 }
 
-/* ================= SAVE ================= */
+/* ===== SAVE LOCAL STORAGE ===== */
 
 function saveData(){
-localStorage.setItem("geckoProducts", JSON.stringify(products))
+localStorage.setItem("geckoProducts",JSON.stringify(products))
 }
 
-/* ================= ADMIN LOGIN ================= */
+/* ===== ADMIN LOGIN ===== */
 
 function adminLogin(){
 
-let input = prompt("Password Admin")
+let input=prompt("Password Admin")
 
-if(input === password){
+if(input===password){
 
 admin=true
 alert("Admin Mode Aktif")
@@ -301,7 +305,7 @@ alert("Password salah")
 
 }
 
-/* ================= ADD PRODUCT ================= */
+/* ===== ADD PRODUCT ===== */
 
 function addProduct(){
 
@@ -318,7 +322,7 @@ render()
 
 }
 
-/* ================= RENDER ================= */
+/* ===== RENDER PRODUCTS ===== */
 
 function render(){
 
@@ -353,9 +357,9 @@ editBox=`
 
 <div class="editBox" id="edit${i}">
 
-<input id="name${i}" value="${p.name}">
-<input id="price${i}" value="${p.price}">
-<textarea id="desc${i}">${p.desc}</textarea>
+<input id="name${i}" value="${p.name}" placeholder="Nama Gecko">
+<input id="price${i}" value="${p.price}" placeholder="Harga">
+<textarea id="desc${i}" placeholder="Deskripsi">${p.desc}</textarea>
 
 <select id="status${i}">
 <option value="available" ${p.status==="available"?"selected":""}>Available</option>
@@ -404,7 +408,7 @@ container.appendChild(card)
 
 }
 
-/* ================= EDIT ================= */
+/* ===== EDIT PRODUCT ===== */
 
 function toggleEdit(i){
 
@@ -429,7 +433,7 @@ render()
 
 }
 
-/* ================= DELETE ================= */
+/* ===== DELETE PRODUCT ===== */
 
 function deleteProduct(i){
 
@@ -444,12 +448,11 @@ render()
 
 }
 
-/* ================= IMAGE UPLOAD ================= */
+/* ===== UPLOAD IMAGE ===== */
 
 function uploadImage(event,i){
 
 const file=event.target.files[0]
-
 if(!file) return
 
 const reader=new FileReader()
@@ -467,7 +470,7 @@ reader.readAsDataURL(file)
 
 }
 
-/* ================= WHATSAPP ================= */
+/* ===== WHATSAPP ORDER ===== */
 
 function orderWhatsApp(name,price){
 
@@ -481,7 +484,7 @@ window.open(url,'_blank')
 
 }
 
-/* ================= IMAGE ZOOM ================= */
+/* ===== IMAGE ZOOM ===== */
 
 function zoomImage(src){
 
@@ -496,7 +499,7 @@ document.getElementById("lightbox").style.display="none"
 
 }
 
-/* ================= START ================= */
+/* ===== START ===== */
 
 render()
 
