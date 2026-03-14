@@ -1,20 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
 
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Amazing Reptile</title>
 
 <style>
 
+/* ================= BODY ================= */
+
 body{
-font-family:Arial;
+font-family:Arial, sans-serif;
 margin:0;
 background:#0f0f0f;
 color:white;
 }
 
-/* NAVBAR */
+/* ================= NAVBAR ================= */
 
 nav{
 display:flex;
@@ -30,7 +35,7 @@ text-decoration:none;
 margin-left:20px;
 }
 
-/* HERO */
+/* ================= HERO ================= */
 
 .hero{
 text-align:center;
@@ -42,9 +47,10 @@ background-position:center;
 
 .hero h1{
 font-size:40px;
+margin-bottom:10px;
 }
 
-/* CONTAINER */
+/* ================= CONTAINER ================= */
 
 .container{
 max-width:1200px;
@@ -52,7 +58,7 @@ margin:auto;
 padding:30px;
 }
 
-/* SEARCH */
+/* ================= SEARCH ================= */
 
 .search{
 margin-bottom:20px;
@@ -65,7 +71,7 @@ border-radius:6px;
 border:none;
 }
 
-/* GRID */
+/* ================= GRID ================= */
 
 .grid{
 display:grid;
@@ -73,7 +79,7 @@ grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
 gap:25px;
 }
 
-/* CARD */
+/* ================= CARD ================= */
 
 .card{
 background:#1a1a1a;
@@ -109,7 +115,7 @@ color:#ccc;
 margin-top:5px;
 }
 
-/* BUTTON */
+/* ================= BUTTON ================= */
 
 button{
 padding:10px 15px;
@@ -125,7 +131,7 @@ button:hover{
 background:#00cc7a;
 }
 
-/* BADGE */
+/* ================= BADGE ================= */
 
 .badge{
 display:inline-block;
@@ -142,7 +148,7 @@ background:red;
 color:white;
 }
 
-/* ADMIN */
+/* ================= ADMIN ================= */
 
 .admin{
 margin-bottom:20px;
@@ -153,9 +159,10 @@ display:none;
 background:#222;
 padding:10px;
 margin-top:10px;
+border-radius:6px;
 }
 
-input,textarea,select{
+input, textarea, select{
 width:100%;
 padding:6px;
 margin-top:5px;
@@ -165,7 +172,7 @@ textarea{
 height:60px;
 }
 
-/* IMAGE ZOOM */
+/* ================= IMAGE ZOOM ================= */
 
 #lightbox{
 position:fixed;
@@ -191,6 +198,8 @@ max-height:90%;
 
 <body>
 
+<!-- ================= NAVBAR ================= -->
+
 <nav>
 
 <h2>Amazing Reptile</h2>
@@ -204,12 +213,16 @@ max-height:90%;
 
 </nav>
 
+<!-- ================= HERO ================= -->
+
 <div class="hero">
 
 <h1>Premium Leopard Gecko Breeder</h1>
 <p>Healthy • High Quality Morphs</p>
 
 </div>
+
+<!-- ================= CONTENT ================= -->
 
 <div class="container">
 
@@ -228,7 +241,7 @@ max-height:90%;
 
 </div>
 
-<!-- IMAGE ZOOM -->
+<!-- ================= IMAGE ZOOM ================= -->
 
 <div id="lightbox" onclick="closeZoom()">
 <img id="zoomImg">
@@ -236,42 +249,48 @@ max-height:90%;
 
 <script>
 
+/* ================= GLOBAL ================= */
+
 let admin=false
 const password="123456"
 
-let products=JSON.parse(localStorage.getItem("geckoProducts")) || []
+let products = JSON.parse(localStorage.getItem("geckoProducts")) || []
+
+/* ================= DEFAULT PRODUCT ================= */
 
 if(products.length===0){
 
-products=[
-
-{
+products=[{
 name:"Super Hypo Tangerine",
 price:1500000,
 desc:"High quality morph, healthy and ready to ship.",
 img:"https://upload.wikimedia.org/wikipedia/commons/6/6a/Leopard_gecko.jpg",
 status:"available"
-}
-
-]
+}]
 
 saveData()
 
 }
 
+/* ================= SAVE ================= */
+
 function saveData(){
-localStorage.setItem("geckoProducts",JSON.stringify(products))
+localStorage.setItem("geckoProducts", JSON.stringify(products))
 }
+
+/* ================= ADMIN LOGIN ================= */
 
 function adminLogin(){
 
-let input=prompt("Password Admin")
+let input = prompt("Password Admin")
 
-if(input===password){
+if(input === password){
 
 admin=true
 alert("Admin Mode Aktif")
+
 document.getElementById("addBtn").style.display="inline-block"
+
 render()
 
 }else{
@@ -281,6 +300,8 @@ alert("Password salah")
 }
 
 }
+
+/* ================= ADD PRODUCT ================= */
 
 function addProduct(){
 
@@ -297,6 +318,8 @@ render()
 
 }
 
+/* ================= RENDER ================= */
+
 function render(){
 
 const container=document.getElementById("products")
@@ -308,9 +331,13 @@ products.forEach((p,i)=>{
 
 if(!p.name.toLowerCase().includes(search)) return
 
-let badge=p.status==="sold"
-?'<div class="badge sold">SOLD</div>'
-:'<div class="badge">AVAILABLE</div>'
+let badge = p.status==="sold"
+? '<div class="badge sold">SOLD</div>'
+: '<div class="badge">AVAILABLE</div>'
+
+let orderBtn = p.status==="sold"
+? `<button disabled style="background:gray;">Sold Out</button>`
+: `<button onclick="orderWhatsApp('${p.name}',${p.price})">Order WhatsApp</button>`
 
 let adminButtons=""
 let editBox=""
@@ -318,21 +345,17 @@ let editBox=""
 if(admin){
 
 adminButtons=`
-
 <button onclick="toggleEdit(${i})">Edit</button>
 <button onclick="deleteProduct(${i})">Hapus</button>
-
 `
 
 editBox=`
 
 <div class="editBox" id="edit${i}">
 
-<input id="name${i}" value="${p.name}" placeholder="Nama Gecko">
-
-<input id="price${i}" value="${p.price}" placeholder="Harga">
-
-<textarea id="desc${i}" placeholder="Keterangan">${p.desc}</textarea>
+<input id="name${i}" value="${p.name}">
+<input id="price${i}" value="${p.price}">
+<textarea id="desc${i}">${p.desc}</textarea>
 
 <select id="status${i}">
 <option value="available" ${p.status==="available"?"selected":""}>Available</option>
@@ -344,22 +367,17 @@ editBox=`
 <button onclick="saveEdit(${i})">Save</button>
 
 </div>
-
 `
 
 }
 
-let orderBtn = p.status==="sold"
-? `<button disabled style="background:gray;">Sold Out</button>`
-: `<button onclick="orderWhatsApp('${p.name}',${p.price})">Order WhatsApp</button>`
-
 const card=document.createElement("div")
-
 card.className="card"
 
 card.innerHTML=`
 
-<img src="${p.img}" onclick="zoomImage('${p.img}')">
+<img src="${p.img || 'https://via.placeholder.com/400x300?text=No+Image'}"
+onclick="zoomImage('${p.img}')">
 
 <div class="card-body">
 
@@ -378,7 +396,6 @@ ${adminButtons}
 ${editBox}
 
 </div>
-
 `
 
 container.appendChild(card)
@@ -387,14 +404,16 @@ container.appendChild(card)
 
 }
 
+/* ================= EDIT ================= */
+
 function toggleEdit(i){
 
 let box=document.getElementById("edit"+i)
 
-box.style.display=
+box.style.display =
 box.style.display==="block"
-?"none"
-:"block"
+? "none"
+: "block"
 
 }
 
@@ -410,17 +429,22 @@ render()
 
 }
 
+/* ================= DELETE ================= */
+
 function deleteProduct(i){
 
 if(confirm("Hapus gecko ini?")){
 
 products.splice(i,1)
+
 saveData()
 render()
 
 }
 
 }
+
+/* ================= IMAGE UPLOAD ================= */
 
 function uploadImage(event,i){
 
@@ -433,6 +457,7 @@ const reader=new FileReader()
 reader.onload=function(e){
 
 products[i].img=e.target.result
+
 saveData()
 render()
 
@@ -441,6 +466,8 @@ render()
 reader.readAsDataURL(file)
 
 }
+
+/* ================= WHATSAPP ================= */
 
 function orderWhatsApp(name,price){
 
@@ -454,7 +481,7 @@ window.open(url,'_blank')
 
 }
 
-/* IMAGE ZOOM */
+/* ================= IMAGE ZOOM ================= */
 
 function zoomImage(src){
 
@@ -468,6 +495,8 @@ function closeZoom(){
 document.getElementById("lightbox").style.display="none"
 
 }
+
+/* ================= START ================= */
 
 render()
 
