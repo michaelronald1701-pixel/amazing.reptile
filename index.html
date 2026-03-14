@@ -3,6 +3,7 @@
 <head>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Amazing Reptile</title>
 
 <style>
@@ -24,6 +25,12 @@ padding:20px;
 background:black;
 }
 
+nav a{
+color:white;
+text-decoration:none;
+margin-left:20px;
+}
+
 /* HERO */
 
 .hero{
@@ -31,6 +38,11 @@ text-align:center;
 padding:80px 20px;
 background:url("https://upload.wikimedia.org/wikipedia/commons/6/6a/Leopard_gecko.jpg");
 background-size:cover;
+background-position:center;
+}
+
+.hero h1{
+font-size:40px;
 }
 
 /* CONTAINER */
@@ -39,16 +51,6 @@ background-size:cover;
 max-width:1200px;
 margin:auto;
 padding:30px;
-}
-
-/* SEARCH */
-
-.search input{
-width:100%;
-padding:10px;
-border-radius:6px;
-border:none;
-margin-bottom:20px;
 }
 
 /* GRID */
@@ -65,12 +67,12 @@ gap:25px;
 background:#1a1a1a;
 border-radius:12px;
 overflow:hidden;
-cursor:pointer;
 transition:0.3s;
 }
 
 .card:hover{
 transform:translateY(-8px);
+box-shadow:0 10px 25px rgba(0,0,0,0.5);
 }
 
 .card img{
@@ -91,6 +93,7 @@ font-weight:bold;
 .desc{
 font-size:14px;
 color:#ccc;
+margin-top:5px;
 }
 
 /* BUTTON */
@@ -103,6 +106,10 @@ color:black;
 border-radius:6px;
 cursor:pointer;
 margin-top:10px;
+}
+
+button:hover{
+background:#00cc7a;
 }
 
 /* BADGE */
@@ -124,6 +131,10 @@ color:white;
 
 /* ADMIN */
 
+.admin{
+margin-bottom:20px;
+}
+
 .editBox{
 display:none;
 background:#222;
@@ -137,109 +148,47 @@ padding:6px;
 margin-top:5px;
 }
 
-/* MODAL DETAIL */
-
-.modal{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.9);
-justify-content:center;
-align-items:center;
-z-index:1000;
-}
-
-.modal-content{
-background:#111;
-padding:20px;
-border-radius:10px;
-max-width:700px;
-width:90%;
-}
-
-.gallery{
-display:flex;
-gap:10px;
-margin-top:10px;
-}
-
-.gallery img{
-width:80px;
-height:80px;
-object-fit:cover;
-cursor:pointer;
-}
-
-/* LIGHTBOX */
-
-.lightbox{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:black;
-justify-content:center;
-align-items:center;
-}
-
-.lightbox img{
-max-width:90%;
-max-height:90%;
+textarea{
+height:60px;
 }
 
 </style>
+
 </head>
 
 <body>
 
 <nav>
+
 <h2>Amazing Reptile</h2>
+
+<div>
+<a href="#">Home</a>
+<a href="#">Shop</a>
+<a href="#">Gallery</a>
+<a href="#">Contact</a>
+</div>
+
 </nav>
 
 <div class="hero">
+
 <h1>Premium Leopard Gecko Breeder</h1>
+<p>Healthy • High Quality Morphs</p>
+
 </div>
 
 <div class="container">
 
+<div class="admin">
+
 <button onclick="adminLogin()">Admin Login</button>
 <button onclick="addProduct()" id="addBtn" style="display:none;">Tambah Gecko</button>
 
-<div class="search">
-<input type="text" id="searchInput" placeholder="Search Gecko..." onkeyup="render()">
 </div>
 
 <div id="products" class="grid"></div>
 
-</div>
-
-<!-- DETAIL MODAL -->
-
-<div id="detailModal" class="modal" onclick="closeModal()">
-<div class="modal-content" onclick="event.stopPropagation()">
-
-<h2 id="detailName"></h2>
-<p id="detailPrice"></p>
-<p id="detailDesc"></p>
-
-<img id="mainImage" style="width:100%;max-height:400px;object-fit:cover;cursor:pointer;">
-
-<div id="gallery" class="gallery"></div>
-
-<button id="orderBtn"></button>
-
-</div>
-</div>
-
-<!-- LIGHTBOX -->
-
-<div id="lightbox" class="lightbox" onclick="closeLightbox()">
-<img id="lightboxImg">
 </div>
 
 <script>
@@ -256,8 +205,8 @@ products=[
 {
 name:"Super Hypo Tangerine",
 price:1500000,
-desc:"High quality morph leopard gecko.",
-images:["https://upload.wikimedia.org/wikipedia/commons/6/6a/Leopard_gecko.jpg"],
+desc:"High quality morph, healthy and ready to ship.",
+img:"https://upload.wikimedia.org/wikipedia/commons/6/6a/Leopard_gecko.jpg",
 status:"available"
 }
 
@@ -280,7 +229,12 @@ if(input===password){
 admin=true
 alert("Admin Mode Aktif")
 document.getElementById("addBtn").style.display="inline-block"
+
 render()
+
+}else{
+
+alert("Password salah")
 
 }
 
@@ -291,8 +245,8 @@ function addProduct(){
 products.push({
 name:"Gecko Baru",
 price:0,
-desc:"Keterangan...",
-images:[],
+desc:"Keterangan gecko...",
+img:"",
 status:"available"
 })
 
@@ -304,27 +258,59 @@ render()
 function render(){
 
 const container=document.getElementById("products")
+
 container.innerHTML=""
 
-let search=document.getElementById("searchInput").value.toLowerCase()
-
 products.forEach((p,i)=>{
-
-if(!p.name.toLowerCase().includes(search)) return
 
 let badge=p.status==="sold"
 ?'<div class="badge sold">SOLD</div>'
 :'<div class="badge">AVAILABLE</div>'
 
-let img=p.images[0]||""
+let adminButtons=""
+let editBox=""
 
-let card=document.createElement("div")
+if(admin){
+
+adminButtons=`
+
+<button onclick="toggleEdit(${i})">Edit</button>
+<button onclick="deleteProduct(${i})">Hapus</button>
+
+`
+
+editBox=`
+
+<div class="editBox" id="edit${i}">
+
+<input id="name${i}" value="${p.name}" placeholder="Nama Gecko">
+
+<input id="price${i}" value="${p.price}" placeholder="Harga">
+
+<textarea id="desc${i}" placeholder="Keterangan">${p.desc}</textarea>
+
+<select id="status${i}">
+<option value="available" ${p.status==="available"?"selected":""}>Available</option>
+<option value="sold" ${p.status==="sold"?"selected":""}>Sold</option>
+</select>
+
+<input type="file" onchange="uploadImage(event,${i})">
+
+<button onclick="saveEdit(${i})">Save</button>
+
+</div>
+
+`
+
+}
+
+const card=document.createElement("div")
 
 card.className="card"
 
 card.innerHTML=`
 
-<img src="${img}">
+<img src="${p.img}">
 
 <div class="card-body">
 
@@ -336,11 +322,19 @@ ${badge}
 
 <p class="desc">${p.desc}</p>
 
+<button onclick="orderWhatsApp('${p.name}',${p.price})">
+
+Order WhatsApp
+
+</button>
+
+${adminButtons}
+
+${editBox}
+
 </div>
 
 `
-
-card.onclick=()=>openDetail(i)
 
 container.appendChild(card)
 
@@ -348,57 +342,59 @@ container.appendChild(card)
 
 }
 
-function openDetail(i){
+function toggleEdit(i){
 
-let p=products[i]
+let box=document.getElementById("edit"+i)
 
-document.getElementById("detailName").innerText=p.name
-document.getElementById("detailPrice").innerText="Rp "+Number(p.price).toLocaleString()
-document.getElementById("detailDesc").innerText=p.desc
-
-let main=p.images[0]||""
-
-document.getElementById("mainImage").src=main
-document.getElementById("mainImage").onclick=()=>openLightbox(main)
-
-let gallery=document.getElementById("gallery")
-gallery.innerHTML=""
-
-p.images.forEach(img=>{
-
-let g=document.createElement("img")
-
-g.src=img
-
-g.onclick=()=>{
-document.getElementById("mainImage").src=img
-}
-
-gallery.appendChild(g)
-
-})
-
-let order=p.status==="sold"
-?'<button disabled style="background:gray;">Sold Out</button>'
-:`<button onclick="orderWhatsApp('${p.name}',${p.price})">Order WhatsApp</button>`
-
-document.getElementById("orderBtn").outerHTML=order
-
-document.getElementById("detailModal").style.display="flex"
+box.style.display=
+box.style.display==="block"
+?"none"
+:"block"
 
 }
 
-function closeModal(){
-document.getElementById("detailModal").style.display="none"
+function saveEdit(i){
+
+products[i].name=document.getElementById("name"+i).value
+products[i].price=document.getElementById("price"+i).value
+products[i].desc=document.getElementById("desc"+i).value
+products[i].status=document.getElementById("status"+i).value
+
+saveData()
+render()
+
 }
 
-function openLightbox(src){
-document.getElementById("lightboxImg").src=src
-document.getElementById("lightbox").style.display="flex"
+function deleteProduct(i){
+
+if(confirm("Hapus gecko ini?")){
+
+products.splice(i,1)
+
+saveData()
+render()
+
 }
 
-function closeLightbox(){
-document.getElementById("lightbox").style.display="none"
+}
+
+function uploadImage(event,i){
+
+const file=event.target.files[0]
+
+const reader=new FileReader()
+
+reader.onload=function(e){
+
+products[i].img=e.target.result
+
+saveData()
+render()
+
+}
+
+reader.readAsDataURL(file)
+
 }
 
 function orderWhatsApp(name,price){
