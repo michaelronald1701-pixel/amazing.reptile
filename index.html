@@ -1,0 +1,160 @@
+<!-- AMAZING REPTILE - FREE ONLINE WEBSITE VERSION -->
+<!-- This version is designed to be hosted FREE using GitHub Pages, Netlify, or Vercel -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amazing Reptile</title>
+<style>
+body{font-family:Arial;margin:0;background:#f5f5f5}
+header{background:#000;color:white;padding:20px;display:flex;justify-content:space-between}
+.container{max-width:1100px;margin:auto;padding:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.card{background:white;border-radius:10px;overflow:hidden;box-shadow:0 5px 10px rgba(0,0,0,0.1)}
+.card img{width:100%;height:200px;object-fit:cover}
+.card-body{padding:15px}
+button{padding:10px 15px;border:none;background:black;color:white;border-radius:5px;cursor:pointer}
+button:hover{opacity:0.8}
+.filter{display:flex;gap:10px;margin-bottom:20px}
+.cart{background:white;padding:20px;border-radius:10px;margin-top:30px}
+input,select{padding:8px;width:100%}
+.checkout{background:white;padding:20px;border-radius:10px;margin-top:20px}
+</style>
+</head>
+<body>
+
+<header>
+<h2>Amazing Reptile</h2>
+<div>Premium Leopard Gecko Breeder</div>
+</header>
+
+<div class="container">
+
+<h2>Available Gecko</h2>
+
+<div class="filter">
+<input id="morphFilter" placeholder="Filter morph">
+<select id="sortPrice">
+<option value="none">Sort Price</option>
+<option value="low">Murah → Mahal</option>
+<option value="high">Mahal → Murah</option>
+</select>
+</div>
+
+<div id="products" class="grid"></div>
+
+<div class="cart">
+<h3>Cart</h3>
+<div id="cartItems"></div>
+<p><b>Total:</b> Rp <span id="total">0</span></p>
+</div>
+
+<div class="checkout">
+<h3>Checkout</h3>
+<p>Isi data pembeli:</p>
+
+<form action="https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse" method="POST" target="_blank">
+<input name="entry.111111" placeholder="Nama Lengkap" required><br><br>
+<input name="entry.222222" placeholder="Email" required><br><br>
+<input name="entry.333333" placeholder="WhatsApp" required><br><br>
+<input name="entry.444444" placeholder="Alamat Pengiriman" required><br><br>
+
+<p><b>Pembayaran:</b></p>
+<p>Transfer Bank / QRIS</p>
+<p>Setelah klik submit silakan kirim bukti pembayaran ke WhatsApp.</p>
+
+<button type="submit">Submit Order</button>
+</form>
+</div>
+
+</div>
+
+<script>
+
+const products=[
+{
+name:"Tangerine Inferno",
+morph:"Tangerine",
+price:3500000,
+img:"https://placehold.co/400x300",
+desc:"High orange saturation breeder line"
+},
+{
+name:"Mack Snow Eclipse",
+morph:"Mack Snow",
+price:2800000,
+img:"https://placehold.co/400x300",
+desc:"Beautiful Mack Snow genetics"
+},
+{
+name:"Super Hypo",
+morph:"Super Hypo",
+price:5000000,
+img:"https://placehold.co/400x300",
+desc:"Breeder holdback quality"
+}
+]
+
+let cart=[]
+
+function render(){
+const morph=document.getElementById("morphFilter").value.toLowerCase()
+const sort=document.getElementById("sortPrice").value
+
+let list=[...products]
+
+if(morph) list=list.filter(p=>p.morph.toLowerCase().includes(morph))
+
+if(sort==="low") list.sort((a,b)=>a.price-b.price)
+if(sort==="high") list.sort((a,b)=>b.price-a.price)
+
+const container=document.getElementById("products")
+container.innerHTML=""
+
+list.forEach((p,i)=>{
+const card=document.createElement("div")
+card.className="card"
+card.innerHTML=`
+<img src="${p.img}">
+<div class="card-body">
+<h4>${p.name}</h4>
+<p>Morph: ${p.morph}</p>
+<p>${p.desc}</p>
+<b>Rp ${p.price.toLocaleString()}</b><br><br>
+<button onclick="addCart(${i})">Add to Cart</button>
+</div>
+`
+container.appendChild(card)
+})
+}
+
+function addCart(i){
+cart.push(products[i])
+updateCart()
+}
+
+function updateCart(){
+const el=document.getElementById("cartItems")
+el.innerHTML=""
+let total=0
+
+cart.forEach(c=>{
+total+=c.price
+const d=document.createElement("div")
+d.innerText=c.name+" - Rp "+c.price.toLocaleString()
+el.appendChild(d)
+})
+
+document.getElementById("total").innerText=total.toLocaleString()
+}
+
+document.getElementById("morphFilter").addEventListener("input",render)
+document.getElementById("sortPrice").addEventListener("change",render)
+
+render()
+
+</script>
+
+</body>
+</html>
