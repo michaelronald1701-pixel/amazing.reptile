@@ -53,32 +53,37 @@ padding:15px;
 }
 
 button{
-padding:10px 15px;
+padding:8px 12px;
 border:none;
 background:black;
 color:white;
 border-radius:5px;
 cursor:pointer;
+margin-top:5px;
 }
 
 button:hover{
 opacity:0.8;
 }
 
-.filter{
-display:flex;
-gap:10px;
-margin-bottom:20px;
+.editBox{
+display:none;
+background:#eee;
+padding:10px;
+margin-top:10px;
+border-radius:5px;
 }
 
-input,select{
-padding:8px;
+input{
 width:100%;
+padding:6px;
+margin-top:5px;
 }
 
 </style>
 
 </head>
+
 <body>
 
 <header>
@@ -90,93 +95,103 @@ width:100%;
 
 <h2>Available Gecko</h2>
 
-<div class="filter">
-<input id="morphFilter" placeholder="Filter morph">
-<select id="sortPrice">
-<option value="none">Sort Price</option>
-<option value="low">Murah → Mahal</option>
-<option value="high">Mahal → Murah</option>
-</select>
-</div>
-
 <div id="products" class="grid"></div>
 
 </div>
 
 <script>
 
-const products=[
+let products=[
 
 {
 name:"Tangerine Inferno",
-morph:"Tangerine",
 price:3500000,
-img:"https://upload.wikimedia.org/wikipedia/commons/6/6a/Leopard_gecko.jpg",
-desc:"High orange saturation breeder line"
+img:"https://upload.wikimedia.org/wikipedia/commons/6/6a/Leopard_gecko.jpg"
 },
 
 {
 name:"Mack Snow Eclipse",
-morph:"Mack Snow",
 price:2800000,
-img:"https://upload.wikimedia.org/wikipedia/commons/6/6a/Leopard_gecko.jpg",
-desc:"Beautiful Mack Snow genetics"
+img:"https://upload.wikimedia.org/wikipedia/commons/6/6a/Leopard_gecko.jpg"
 },
 
 {
 name:"Super Hypo",
-morph:"Super Hypo",
 price:5000000,
-img:"https://upload.wikimedia.org/wikipedia/commons/6/6a/Leopard_gecko.jpg",
-desc:"Breeder holdback quality"
+img:"https://upload.wikimedia.org/wikipedia/commons/6/6a/Leopard_gecko.jpg"
 }
 
 ]
 
 function render(){
 
-const morph=document.getElementById("morphFilter").value.toLowerCase()
-const sort=document.getElementById("sortPrice").value
-
-let list=[...products]
-
-if(morph){
-list=list.filter(p=>p.morph.toLowerCase().includes(morph))
-}
-
-if(sort==="low"){
-list.sort((a,b)=>a.price-b.price)
-}
-
-if(sort==="high"){
-list.sort((a,b)=>b.price-a.price)
-}
-
 const container=document.getElementById("products")
 container.innerHTML=""
 
-list.forEach(p=>{
+products.forEach((p,i)=>{
 
 const card=document.createElement("div")
 card.className="card"
 
 card.innerHTML=`
+
 <img src="${p.img}">
+
 <div class="card-body">
-<h4>${p.name}</h4>
-<p>Morph: ${p.morph}</p>
-<p>${p.desc}</p>
-<b>Rp ${p.price.toLocaleString()}</b>
-<br><br>
+
+<h3>${p.name}</h3>
+
+<p>Harga: Rp ${p.price.toLocaleString()}</p>
+
 <button onclick="orderWhatsApp('${p.name}',${p.price})">
 Order via WhatsApp
 </button>
+
+<button onclick="toggleEdit(${i})">
+Edit
+</button>
+
+<div class="editBox" id="edit${i}">
+
+<input id="name${i}" value="${p.name}" placeholder="Nama Gecko">
+
+<input id="price${i}" value="${p.price}" placeholder="Harga">
+
+<input id="img${i}" value="${p.img}" placeholder="Link Foto">
+
+<button onclick="saveEdit(${i})">Save</button>
+
 </div>
+
+</div>
+
 `
 
 container.appendChild(card)
 
 })
+
+}
+
+function toggleEdit(i){
+
+let box=document.getElementById("edit"+i)
+
+if(box.style.display==="block"){
+box.style.display="none"
+}else{
+box.style.display="block"
+}
+
+}
+
+function saveEdit(i){
+
+products[i].name=document.getElementById("name"+i).value
+products[i].price=document.getElementById("price"+i).value
+products[i].img=document.getElementById("img"+i).value
+
+render()
 
 }
 
@@ -191,9 +206,6 @@ let url=`https://wa.me/${phone}?text=${encodeURIComponent(message)}`
 window.open(url,'_blank')
 
 }
-
-document.getElementById("morphFilter").addEventListener("input",render)
-document.getElementById("sortPrice").addEventListener("change",render)
 
 render()
 
