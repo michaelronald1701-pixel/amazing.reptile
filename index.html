@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Amazing Reptile</title>
 
@@ -62,8 +61,346 @@ cursor:pointer;
 margin-top:5px;
 }
 
-button:hover{
-opacity:0.8;
+.adminPanel{
+margin-bottom:20px;
+}
+
+input{
+padding:6px;
+width:100%;
+margin-top:5px;
+}
+
+.editBox{
+display:none;
+background:#eee;
+padding:10px;
+margin-top:10px;
+border-radius:5px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h2>Amazing Reptile</h2>
+<div>Premium Leopard Gecko Breeder</div>
+</header>
+
+<div class="container">
+
+<div class="adminPanel">
+
+<button onclick="adminLogin()">Admin Login</button>
+
+</div>
+
+<div id="products" class="grid"></div>
+
+</div>
+
+<script>
+
+let admin=false
+
+const password="123456"
+
+let products=[
+
+{
+name:"Tangerine Inferno",
+price:3500000,
+img:"https://upload.wikimedia.org/wikipedia/commons/6/6a/Leopard_gecko.jpg"
+},
+
+{
+name:"Mack Snow Eclipse",
+price:2800000,
+img:"https://upload.wikimedia.org/wikipedia/commons/6/6a/Leopard_gecko.jpg"
+}
+
+]
+
+function adminLogin(){
+
+let input=prompt("Masukkan password admin")
+
+if(input===password){
+
+admin=true
+alert("Admin Mode Aktif")
+
+render()
+
+}else{
+
+alert("Password salah")
+
+}
+
+}
+
+function render(){
+
+const container=document.getElementById("products")
+
+container.innerHTML=""
+
+products.forEach((p,i)=>{
+
+let editButton=""
+
+let editBox=""
+
+if(admin){
+
+editButton=`<button onclick="toggleEdit(${i})">Edit</button>`
+
+editBox=`
+
+<div class="editBox" id="edit${i}">
+
+<input id="name${i}" value="${p.name}" placeholder="Nama">
+
+<input id="price${i}" value="${p.price}" placeholder="Harga">
+
+<input type="file" onchange="uploadImage(event,${i})">
+
+<button onclick="saveEdit(${i})">Save</button>
+
+</div>
+
+`
+
+}
+
+const card=document.createElement("div")
+
+card.className="card"
+
+card.innerHTML=`
+
+<img src="${p.img}">
+
+<div class="card-body">
+
+<h3>${p.name}</h3>
+
+<p>Rp ${p.price.toLocaleString()}</p>
+
+<button onclick="orderWhatsApp('${p.name}',${p.price})">
+
+Order via WhatsApp
+
+</button>
+
+${editButton}
+
+${editBox}
+
+</div>
+
+`
+
+container.appendChild(card)
+
+})
+
+}
+
+function toggleEdit(i){
+
+let box=document.getElementById("edit"+i)
+
+if(box.style.display==="block"){
+
+box.style.display="none"
+
+}else{
+
+box.style.display="block"
+
+}
+
+}
+
+function saveEdit(i){
+
+products[i].name=document.getElementById("name"+i).value
+
+products[i].price=document.getElementById("price"+i).value
+
+render()
+
+}
+
+function uploadImage(event,i){
+
+const file=event.target.files[0]
+
+const reader=new FileReader()
+
+reader.onload=function(e){
+
+products[i].img=e.target.result
+
+render()
+
+}
+
+reader.readAsDataURL(file)
+
+}
+
+function orderWhatsApp(name,price){
+
+let phone="6283805174938"
+
+let message=`Halo Amazing Reptile, saya ingin membeli ${name} dengan harga Rp ${price}`
+
+let url=`https://wa.me/${phone}?text=${encodeURIComponent(message)}`
+
+window.open(url,'_blank')
+
+}
+
+render()
+
+</script>
+
+</body>
+</html>
+What is this?
+Fitur yang Sekarang Kamu Punya
+Admin Mode
+
+Klik Admin Login
+Password default:
+
+123456
+
+Setelah login:
+
+✔ muncul tombol Edit
+✔ bisa edit nama & harga
+✔ bisa upload foto dari HP / komputer
+
+Cara Upload Foto Gecko
+
+1️⃣ Klik Admin Login
+2️⃣ Klik Edit pada produk
+3️⃣ Klik Choose File
+4️⃣ Pilih foto dari galeri HP atau komputer
+5️⃣ Klik Save
+
+Penting
+
+Karena website gratis di
+GitHub
+dan
+GitHub Pages
+
+data tidak tersimpan permanen jika refresh.
+
+💡 Kalau kamu mau, saya bisa buat versi PRO seperti marketplace reptile, misalnya:
+
+tambah produk baru
+
+hapus produk
+
+upload foto langsung dari HP
+
+database tersimpan
+
+website terlihat seperti MorphMarket versi sederhana
+
+Biasanya breeder luar pakai sistem seperti itu. 🦎🔥
+
+oke boleh
+
+Bagus. Kita akan naikkan website Amazing Reptile kamu ke versi jauh lebih kuat tapi tetap bisa jalan gratis di GitHub dan di-hosting dengan GitHub Pages.
+
+Versi ini akan punya fitur:
+
+✅ Admin login
+✅ Tambah gecko baru
+✅ Edit gecko
+✅ Hapus gecko
+✅ Upload foto dari galeri HP / file komputer
+✅ Data tersimpan di browser (localStorage)
+✅ Order otomatis ke WhatsApp
+
+Artinya setelah kamu edit produk, tidak hilang saat refresh.
+
+Ganti seluruh isi index.html dengan ini
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Amazing Reptile</title>
+
+<style>
+
+body{
+font-family:Arial;
+margin:0;
+background:#f5f5f5;
+}
+
+header{
+background:black;
+color:white;
+padding:20px;
+display:flex;
+justify-content:space-between;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:20px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+}
+
+.card{
+background:white;
+border-radius:10px;
+overflow:hidden;
+box-shadow:0 5px 10px rgba(0,0,0,0.1);
+}
+
+.card img{
+width:100%;
+height:200px;
+object-fit:cover;
+}
+
+.card-body{
+padding:15px;
+}
+
+button{
+padding:8px 12px;
+border:none;
+background:black;
+color:white;
+border-radius:5px;
+cursor:pointer;
+margin-top:5px;
+}
+
+.adminPanel{
+margin-bottom:20px;
 }
 
 .editBox{
@@ -75,8 +412,8 @@ border-radius:5px;
 }
 
 input{
-width:100%;
 padding:6px;
+width:100%;
 margin-top:5px;
 }
 
@@ -93,7 +430,12 @@ margin-top:5px;
 
 <div class="container">
 
-<h2>Available Gecko</h2>
+<div class="adminPanel">
+
+<button onclick="adminLogin()">Admin Login</button>
+<button onclick="addProduct()" id="addBtn" style="display:none;">Tambah Gecko</button>
+
+</div>
 
 <div id="products" class="grid"></div>
 
@@ -101,36 +443,111 @@ margin-top:5px;
 
 <script>
 
-let products=[
+let admin=false
+const password="Mekel020405#"
 
-{
-name:"Tangerine Inferno",
-price:3500000,
-img:"https://upload.wikimedia.org/wikipedia/commons/6/6a/Leopard_gecko.jpg"
-},
+let products=JSON.parse(localStorage.getItem("geckoProducts")) || []
 
-{
-name:"Mack Snow Eclipse",
-price:2800000,
-img:"https://upload.wikimedia.org/wikipedia/commons/6/6a/Leopard_gecko.jpg"
-},
+if(products.length===0){
+
+products=[
 
 {
 name:"Super Hypo",
-price:5000000,
+price:1500000,
 img:"https://upload.wikimedia.org/wikipedia/commons/6/6a/Leopard_gecko.jpg"
 }
 
 ]
 
+saveData()
+
+}
+
+function saveData(){
+
+localStorage.setItem("geckoProducts",JSON.stringify(products))
+
+}
+
+function adminLogin(){
+
+let input=prompt("Masukkan password admin")
+
+if(input===password){
+
+admin=true
+
+alert("Admin Mode Aktif")
+
+document.getElementById("addBtn").style.display="inline-block"
+
+render()
+
+}else{
+
+alert("Password salah")
+
+}
+
+}
+
+function addProduct(){
+
+products.push({
+
+name:"Gecko Baru",
+price:0,
+img:""
+
+})
+
+saveData()
+
+render()
+
+}
+
 function render(){
 
 const container=document.getElementById("products")
+
 container.innerHTML=""
 
 products.forEach((p,i)=>{
 
+let adminButtons=""
+let editBox=""
+
+if(admin){
+
+adminButtons=`
+
+<button onclick="toggleEdit(${i})">Edit</button>
+<button onclick="deleteProduct(${i})">Hapus</button>
+
+`
+
+editBox=`
+
+<div class="editBox" id="edit${i}">
+
+<input id="name${i}" value="${p.name}" placeholder="Nama Gecko">
+
+<input id="price${i}" value="${p.price}" placeholder="Harga">
+
+<input type="file" onchange="uploadImage(event,${i})">
+
+<button onclick="saveEdit(${i})">Save</button>
+
+</div>
+
+`
+
+}
+
 const card=document.createElement("div")
+
 card.className="card"
 
 card.innerHTML=`
@@ -141,27 +558,17 @@ card.innerHTML=`
 
 <h3>${p.name}</h3>
 
-<p>Harga: Rp ${p.price.toLocaleString()}</p>
+<p>Rp ${Number(p.price).toLocaleString()}</p>
 
 <button onclick="orderWhatsApp('${p.name}',${p.price})">
+
 Order via WhatsApp
+
 </button>
 
-<button onclick="toggleEdit(${i})">
-Edit
-</button>
+${adminButtons}
 
-<div class="editBox" id="edit${i}">
-
-<input id="name${i}" value="${p.name}" placeholder="Nama Gecko">
-
-<input id="price${i}" value="${p.price}" placeholder="Harga">
-
-<input id="img${i}" value="${p.img}" placeholder="Link Foto">
-
-<button onclick="saveEdit(${i})">Save</button>
-
-</div>
+${editBox}
 
 </div>
 
@@ -188,10 +595,46 @@ box.style.display="block"
 function saveEdit(i){
 
 products[i].name=document.getElementById("name"+i).value
+
 products[i].price=document.getElementById("price"+i).value
-products[i].img=document.getElementById("img"+i).value
+
+saveData()
 
 render()
+
+}
+
+function deleteProduct(i){
+
+if(confirm("Hapus gecko ini?")){
+
+products.splice(i,1)
+
+saveData()
+
+render()
+
+}
+
+}
+
+function uploadImage(event,i){
+
+const file=event.target.files[0]
+
+const reader=new FileReader()
+
+reader.onload=function(e){
+
+products[i].img=e.target.result
+
+saveData()
+
+render()
+
+}
+
+reader.readAsDataURL(file)
 
 }
 
