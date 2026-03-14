@@ -3,7 +3,6 @@
 <head>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>Amazing Reptile</title>
 
 <style>
@@ -53,6 +52,19 @@ margin:auto;
 padding:30px;
 }
 
+/* SEARCH */
+
+.search{
+margin-bottom:20px;
+}
+
+.search input{
+width:100%;
+padding:10px;
+border-radius:6px;
+border:none;
+}
+
 /* GRID */
 
 .grid{
@@ -79,6 +91,7 @@ box-shadow:0 10px 25px rgba(0,0,0,0.5);
 width:100%;
 height:220px;
 object-fit:cover;
+cursor:pointer;
 }
 
 .card-body{
@@ -152,6 +165,26 @@ textarea{
 height:60px;
 }
 
+/* IMAGE ZOOM */
+
+#lightbox{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.9);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:1000;
+}
+
+#lightbox img{
+max-width:90%;
+max-height:90%;
+}
+
 </style>
 
 </head>
@@ -187,8 +220,18 @@ height:60px;
 
 </div>
 
+<div class="search">
+<input id="searchBox" placeholder="Search Gecko..." onkeyup="render()">
+</div>
+
 <div id="products" class="grid"></div>
 
+</div>
+
+<!-- IMAGE ZOOM -->
+
+<div id="lightbox" onclick="closeZoom()">
+<img id="zoomImg">
 </div>
 
 <script>
@@ -229,7 +272,6 @@ if(input===password){
 admin=true
 alert("Admin Mode Aktif")
 document.getElementById("addBtn").style.display="inline-block"
-
 render()
 
 }else{
@@ -258,10 +300,13 @@ render()
 function render(){
 
 const container=document.getElementById("products")
-
 container.innerHTML=""
 
+let search=document.getElementById("searchBox").value.toLowerCase()
+
 products.forEach((p,i)=>{
+
+if(!p.name.toLowerCase().includes(search)) return
 
 let badge=p.status==="sold"
 ?'<div class="badge sold">SOLD</div>'
@@ -304,13 +349,17 @@ editBox=`
 
 }
 
+let orderBtn = p.status==="sold"
+? `<button disabled style="background:gray;">Sold Out</button>`
+: `<button onclick="orderWhatsApp('${p.name}',${p.price})">Order WhatsApp</button>`
+
 const card=document.createElement("div")
 
 card.className="card"
 
 card.innerHTML=`
 
-<img src="${p.img}">
+<img src="${p.img}" onclick="zoomImage('${p.img}')">
 
 <div class="card-body">
 
@@ -322,11 +371,7 @@ ${badge}
 
 <p class="desc">${p.desc}</p>
 
-<button onclick="orderWhatsApp('${p.name}',${p.price})">
-
-Order WhatsApp
-
-</button>
+${orderBtn}
 
 ${adminButtons}
 
@@ -370,7 +415,6 @@ function deleteProduct(i){
 if(confirm("Hapus gecko ini?")){
 
 products.splice(i,1)
-
 saveData()
 render()
 
@@ -382,12 +426,13 @@ function uploadImage(event,i){
 
 const file=event.target.files[0]
 
+if(!file) return
+
 const reader=new FileReader()
 
 reader.onload=function(e){
 
 products[i].img=e.target.result
-
 saveData()
 render()
 
@@ -406,6 +451,21 @@ let message=`Halo Amazing Reptile, saya ingin membeli ${name} harga Rp ${price}`
 let url=`https://wa.me/${phone}?text=${encodeURIComponent(message)}`
 
 window.open(url,'_blank')
+
+}
+
+/* IMAGE ZOOM */
+
+function zoomImage(src){
+
+document.getElementById("zoomImg").src=src
+document.getElementById("lightbox").style.display="flex"
+
+}
+
+function closeZoom(){
+
+document.getElementById("lightbox").style.display="none"
 
 }
 
